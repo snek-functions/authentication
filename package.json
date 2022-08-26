@@ -2,6 +2,7 @@
   "name": "@snek-functions/authentication",
   "version": "0.0.1",
   "private": true,
+  "main": "dist/index.js",
   "type": "module",
   "description": "Generated with `snek-functions init`",
   "author": "snek-at",
