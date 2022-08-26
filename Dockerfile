@@ -4,7 +4,8 @@ LABEL description="This container serves as an entry point for our future Snek F
 LABEL org.opencontainers.image.source="https://github.com/snek-at/origin"
 LABEL maintainer="team@snek.at"
 
-ENV LAMBDA_TASK_ROOT=/var/task     SNEK_FUNCTIONS_BUILD_DIR=/tmp/snek-functions
+ENV LAMBDA_TASK_ROOT=/var/task \
+    SNEK_FUNCTIONS_BUILD_DIR=/tmp/snek-functions
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 
@@ -25,7 +26,10 @@ RUN chmod +x entrypoint.sh
 
 WORKDIR ${SNEK_FUNCTIONS_BUILD_DIR}
 
-RUN ln -s /usr/local/bin/node /var/lang/bin/node ;    npm install ;    npx snek-functions build --functions-path . ;    # Copy the built functions to the lambda function
+RUN ln -s /usr/local/bin/node /var/lang/bin/node ;\
+    npm install ;\
+    npx snek-functions build --functions-path . ;\
+    # Copy the built functions to the lambda function
     cp -r dist node_modules ${LAMBDA_TASK_ROOT}
 
 WORKDIR ${LAMBDA_TASK_ROOT}
