@@ -1,5 +1,6 @@
-service: snek-functions-graphql-helix-express
+service: authenticaton
 frameworkVersion: '3'
+useDotenv: true
 
 plugins:
   - serverless-offline
@@ -11,12 +12,33 @@ custom:
     - If: '"${self:custom.isOffline}" != "true"'
       Exclude:
         - functions.endpoint.handler
+        - provider.environment.AWS_ACCESS_KEY_ID
+        - provider.environment.AWS_SECRET_ACCESS_KEY
       ElseExclude:
         - functions.endpoint.image
 
 provider:
   name: aws
   region: eu-central-1
+
+  environment:
+    AWS_ACCESS_KEY_ID: ${env:AWS_ACCESS_KEY_ID, ""}
+    AWS_SECRET_ACCESS_KEY: ${env:AWS_SECRET_ACCESS_KEY, ""}
+
+  iam:
+    role:
+      statements:
+        # Allow functions to list all buckets
+        - Effect: Allow
+          Action: 's3:ListBucket'
+          Resource: '*'
+        # Allow functions to read/write objects in a bucket
+        - Effect: Allow
+          Action:
+            - 's3:GetObject'
+            #- 's3:PutObject'
+          Resource:
+            - 'arn:aws:s3:::snekauth/*'
 
   ecr:
     images:
