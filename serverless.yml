@@ -50,8 +50,8 @@ functions:
     image:
       name: appimage
       command:
-        - app.handler
-    handler: app.handler
+        - dist/app.handler
+    handler: dist/app.handler
     events:
       - httpApi:
           path: '*'
