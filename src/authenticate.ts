@@ -5,7 +5,7 @@ import {storage, hash} from './internal/index.js'
 const authenticate = fn<
   {username: string; password: string},
   {
-    uid: string
+    user_id: string
   }
 >(
   async ({username, password}, _, req) => {
@@ -22,7 +22,7 @@ const authenticate = fn<
     // hash_algorithm.verify("password", user.password).then(console.log); // prints true
     if (await hash.verify(password, user.password)) {
       return {
-        uid: user.uid.toString()
+        user_id: user.user_id.toString()
       }
     }
 
