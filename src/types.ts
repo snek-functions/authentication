@@ -4,7 +4,7 @@ export interface TokenPair {
 }
 
 export interface User {
-  uid: string
+  user_id: string
   alias: string
   password: string
 }

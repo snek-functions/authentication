@@ -68,7 +68,7 @@ export async function queryDatabaseForUser(username: string) {
   };
 
   const rows = await promiseConAll(
-    "SELECT * FROM 'alias' a, 'user' u WHERE a.uid=u.uid AND a.alias=?::STRING LIMIT 1", [username,]
+    "SELECT * FROM 'alias' a, 'user' u WHERE a.user_id=u.user_id AND a.alias=?::STRING LIMIT 1", [username,]
   );
   
   let res = rows[0]
