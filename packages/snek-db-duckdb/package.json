@@ -1,0 +1,20 @@
+{
+    "name": "@snek-at/db-duckdb",
+    "version": "0.0.1",
+    "license": "GPL-2.0",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+      "lint": "eslint '**/*.ts{,x}'",
+      "lint-fix": "eslint '**/*.ts{,x}' --fix",
+      "test": "jest --config=../../jest.config.js",
+      "build": "tsc --build"
+    },
+    "dependencies": {
+      "duckdb": "0.4.0"
+    },
+    "devDependencies": {
+      "typescript": "^4.7.4"
+    }
+  }
+  
