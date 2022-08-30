@@ -13,14 +13,14 @@ const authenticate = fn<
     const user = (await storage.queryDatabaseForUser(username)) as User
 
     // const user: User = {
-    //   uid: '1',
+    //   user_id: '1',
     //   alias: username,
     //   password: password
     // }
 
     // const hash_algorithm = hashers.getHasher(hash_name);
     // hash_algorithm.verify("password", user.password).then(console.log); // prints true
-    if (await hash.verify(password, user.password)) {
+    if (await hash.verify(password, user.password_hash)) {
       return {
         user_id: user.user_id.toString()
       }
