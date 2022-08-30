@@ -1,5 +1,6 @@
 import {fn} from './factory'
 import {User} from './types'
+import {storage, hash} from './internal/index.js'
 
 const authenticate = fn<
   {username: string; password: string},
@@ -9,19 +10,17 @@ const authenticate = fn<
 >(
   async ({username, password}, _, req) => {
     // Does one alias per user really make sense?
-    // const user = (await storage.queryDatabaseWithIterator(username)) as {
-    //   uid: number
-    //   alias: string
-    //   password: string
+    const user = (await storage.queryDatabaseForUser(username)) as User
+
+    // const user: User = {
+    //   uid: '1',
+    //   alias: username,
+    //   password: password
     // }
 
-    const user: User = {
-      uid: '1',
-      alias: username,
-      password: password
-    }
-
-    if (username === user.alias && password === user.password) {
+    // const hash_algorithm = hashers.getHasher(hash_name);
+    // hash_algorithm.verify("password", user.password).then(console.log); // prints true
+    if (await hash.verify(password, user.password)) {
       return {
         uid: user.uid.toString()
       }
