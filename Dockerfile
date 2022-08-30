@@ -18,7 +18,7 @@ COPY --from=amazon/aws-lambda-nodejs:latest /etc/pki/tls/certs/ca-bundle.crt /et
 COPY --from=amazon/aws-lambda-nodejs:latest /bin/sh /bin/sh
 
 # Add static files from . to task root
-COPY package.json app.js entrypoint.sh ${LAMBDA_TASK_ROOT}/
+COPY package.json entrypoint.sh ${LAMBDA_TASK_ROOT}/
 # Copy all files form the . to the build dir
 COPY ./ ${SNEK_FUNCTIONS_BUILD_DIR}/
 
