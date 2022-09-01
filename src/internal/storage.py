@@ -4,14 +4,16 @@ import settings as settings
 
  
 def pull_db(con, duckdb_cached):
+    # if not duckdb_cached:
     if settings.s3_access_key_id:
-        # con.execute("SET home_directory='/tmp';")
-        if not duckdb_cached:
-            con.execute("INSTALL httpfs;")
-            con.execute("LOAD httpfs;")
-            con.execute(f"SET s3_region='{settings.s3_region}';")
-            con.execute(f"SET s3_access_key_id='{settings.s3_access_key_id}';")
-            con.execute(f"SET s3_secret_access_key='{settings.s3_secret_access_key}';")
+        con.execute("INSTALL httpfs;")
+        con.execute("LOAD httpfs;")
+        con.execute(f"SET s3_region='{settings.s3_region}';")
+        con.execute(f"SET s3_access_key_id='{settings.s3_access_key_id}';")
+        con.execute(f"SET s3_secret_access_key='{settings.s3_secret_access_key}';")
+    if settings.s3_session_token:
+        con.execute(f"SET s3_session_token='{settings.s3_session_token}';")
+    
 
     # Create a table with all user for authentication.
     # Format:
@@ -41,8 +43,8 @@ def main(username):
     #con = duckdb.connect(':memory:')
     con = duckdb.connect(database=settings.duckdb_path, read_only=False)
 
-    if not settings.duckdb_cached:
-        pull_db(con, settings.duckdb_cached)
+    # if not settings.duckdb_cached:
+    pull_db(con, settings.duckdb_cached)
 
     res = con.execute(" \
         SELECT a.alias, u.user_id, u.password FROM '_alias' a, '_user' u \

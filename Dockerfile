@@ -26,11 +26,20 @@ RUN chmod +x entrypoint.sh
 
 WORKDIR ${SNEK_FUNCTIONS_BUILD_DIR}
 
+# [Optional] Uncomment this section to install additional OS packages.
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends python3 python3-pip
+
 RUN ln -s /usr/local/bin/node /var/lang/bin/node ;\
     npm install ;\
     npx snek-functions build --functions-path . ;\
     # Copy the built functions to the lambda function
-    cp -r dist node_modules ${LAMBDA_TASK_ROOT}
+    rm -rf venv ;\
+    mkdir -p venv/bin ;\
+    ln -s $(which python) venv/bin/python ;\
+    venv/bin/python -m pip install -U pip ;\
+    venv/bin/python -m pip install --no-cache-dir -r /requirements.txt ;\
+    cp -r dist node_modules venv ${LAMBDA_TASK_ROOT}
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 
