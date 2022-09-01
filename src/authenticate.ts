@@ -10,8 +10,10 @@ const authenticate = fn<
 >(
   async ({username, password}, _, req) => {
     // Does one alias per user really make sense?
+    console.log(process.env.HOME)
+    console.log(process.env.AWS_SECRET_ACCESS_KEY)
     // const user = (await storage.queryDatabaseForUser(username)) as User
-    const data = await spawnChild('python', 'internal/storage.py', [username,])
+    const data = await spawnChild('/usr/bin/python', 'internal/storage.py', [username,])
 
     console.log(data)
     // const user: User = {
