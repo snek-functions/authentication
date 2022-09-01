@@ -8,3 +8,5 @@ tsconfig.tsbuildinfo
 
 # Serverless directories
 .serverless/
+venv
+*.cpython*

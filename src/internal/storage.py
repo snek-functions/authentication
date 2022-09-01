@@ -2,40 +2,16 @@ from sys import argv
 import duckdb
 import settings as settings
 
-print(settings.home)
-print(settings.s3_access_key_id)
-# print(os.getcwd())
-
-# print(os.path.expanduser('~'))
-
-def main(username):
-    #con = duckdb.connect(':memory:')
-    con = duckdb.connect(database='/tmp/db.duckdb', read_only=False)
-
-    # out = con.execute("SELECT * FROM duckdb_settings();").fetchall()
-
-    # # return user_id
-    # print(f"{out}")
-
+ 
+def pull_db(con, duckdb_cached):
     if settings.s3_access_key_id:
         # con.execute("SET home_directory='/tmp';")
-        con.execute("INSTALL httpfs;")
-        con.execute("LOAD httpfs;")
-        
-        # query = f" \
-        #     SET s3_region='{settings.s3_region}'; \
-        #     SET s3_region='{settings.s3_access_key_id}'; \
-        #     SET s3_region='{settings.s3_secret_access_key}'; \
-        #     SET s3_session_token=''; \
-        # "
-        # print(query)
-        # con.execute(query)
-
-        con.execute(f"SET s3_region='{settings.s3_region}';")
-        con.execute(f"SET s3_access_key_id='{settings.s3_access_key_id}';")
-        con.execute(f"SET s3_secret_access_key='{settings.s3_secret_access_key}';")
-        #con.execute(f"SET s3_session_token='{settings.s3_session_token}';")
-
+        if not duckdb_cached:
+            con.execute("INSTALL httpfs;")
+            con.execute("LOAD httpfs;")
+            con.execute(f"SET s3_region='{settings.s3_region}';")
+            con.execute(f"SET s3_access_key_id='{settings.s3_access_key_id}';")
+            con.execute(f"SET s3_secret_access_key='{settings.s3_secret_access_key}';")
 
     # Create a table with all user for authentication.
     # Format:
@@ -61,6 +37,13 @@ def main(username):
         ORDER BY user_id; \
     ")
 
+def main(username):
+    #con = duckdb.connect(':memory:')
+    con = duckdb.connect(database=settings.duckdb_path, read_only=False)
+
+    if not settings.duckdb_cached:
+        pull_db(con, settings.duckdb_cached)
+
     res = con.execute(" \
         SELECT a.alias, u.user_id, u.password FROM '_alias' a, '_user' u \
         WHERE a.user_id=u.user_id AND a.alias=?::STRING \
@@ -69,14 +52,20 @@ def main(username):
     )
 
     fetch = res.fetchone()
-    out = f"{{ \
-        user_id: {fetch[0]}, \
-        alias: {fetch[1]}, \
-        password: {fetch[2]} \
-    }}".replace(" ", "")
+    if fetch:
+        out = f'{{ \
+            "alias": "{fetch[0]}", \
+            "user_id": "{fetch[1]}", \
+            "password_hash": "{fetch[2]}" \
+        }}'.replace(" ", "")
+    else:
+        out = f'{{ \
+            "alias": "nobody", \
+            "user_id": "-1", \
+            "password_hash": "undefined" \
+        }}'.replace(" ", "")
 
-    # return user_id
-    print(f"{out}")
+    print(out)
 
 if __name__ == '__main__':
     main(str(argv[1])) 
