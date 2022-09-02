@@ -2,7 +2,7 @@ import os
 
 env = os.environ.copy()
 
-home = env.get("HOME", "/tmp")
+home = env.get("HOME", "/var/task")
 
 s3_region = env.get("AWS_REGION", "eu-central-1")
 s3_access_key_id = env.get("AWS_ACCESS_KEY_ID", "")

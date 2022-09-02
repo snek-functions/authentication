@@ -3,7 +3,11 @@ import duckdb
 import settings as settings
 
 #con = duckdb.connect(':memory:')
-con = duckdb.connect(database=settings.duckdb_path, read_only=False)
+if settings.is_offline:
+    con = duckdb.connect(':memory:')
+else:
+    con = duckdb.connect(database=settings.duckdb_path, read_only=False)
+
 duckdb_cached = settings.duckdb_cached
 
 def pull_db():

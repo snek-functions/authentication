@@ -6,7 +6,7 @@ LABEL maintainer="team@snek.at"
 
 ENV LAMBDA_TASK_ROOT=/var/task \
     SNEK_FUNCTIONS_BUILD_DIR=/tmp/snek-functions \
-    HOME=/tmp
+    HOME=/var/task
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 
@@ -46,7 +46,7 @@ RUN set -ex \
     && venv/bin/python -m pip install -U pip \
     && venv/bin/python -m pip install duckdb \
     && venv/bin/python duckdb_setup.py \
-    && cp -r src dist node_modules venv ${LAMBDA_TASK_ROOT} \
+    && cp -r dist node_modules venv ${LAMBDA_TASK_ROOT} \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $BUILD_DEPS \
     && rm -rf /var/lib/apt/lists
 

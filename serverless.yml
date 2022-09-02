@@ -14,6 +14,7 @@ custom:
         - functions.endpoint.handler
         - provider.environment.AWS_ACCESS_KEY_ID
         - provider.environment.AWS_SECRET_ACCESS_KEY
+        - provider.environment.HOME
       ElseExclude:
         - functions.endpoint.image
 
