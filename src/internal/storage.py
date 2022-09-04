@@ -31,7 +31,7 @@ def pull_db():
     con.execute(" \
         CREATE TABLE '_user' AS \
         SELECT * \
-        FROM parquet_scan('s3://snekauth/_user.parquet') \
+        FROM 001000000000000('s3://snekauth/_user.parquet') \
         ORDER BY user_id; \
     ")
 

@@ -45,7 +45,7 @@ RUN set -ex \
     && ln -s $(which python3) venv/bin/python \
     && venv/bin/python -m pip install -U pip \
     && venv/bin/python -m pip install duckdb \
-    && venv/bin/python duckdb_setup.py \
+    && venv/bin/python setup_duckdb.py \
     && cp -r dist node_modules venv ${LAMBDA_TASK_ROOT} \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $BUILD_DEPS \
     && rm -rf /var/lib/apt/lists
