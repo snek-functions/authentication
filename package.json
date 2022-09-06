@@ -6,8 +6,7 @@
   "description": "Generated with `snek-functions init`",
   "author": "snek-at",
   "dependencies": {
-    "@snek-at/functions": "*",
-    "duckdb": "^0.4.0"
+    "@snek-at/functions": "*"
   },
   "devDependencies": {
     "nodemon": "^2.0.19",
@@ -16,7 +15,8 @@
     "serverless-plugin-ifelse": "^1.0.7"
   },
   "scripts": {
-    "start": "sf build -f . && IS_OFFLINE=true nodemon --watch dist --exec sls offline --httpPort 4000 --lambdaPort 4002",
+    "build": "sf build -f .",
+    "start": "sf build -f . && IS_OFFLINE=true nodemon --watch dist --exec sls offline --httpPort 4020 --lambdaPort 4022",
     "deploy": "sls deploy",
     "postinstall": "sf install"
   },
