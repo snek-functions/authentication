@@ -11,5 +11,6 @@ s3_session_token = env.get("AWS_SESSION_TOKEN", "")
 
 is_offline = env.get("IS_OFFLINE", "")
 
-duckdb_path=env.get("DUCKDB_PATH", "/tmp/db.duckdb")
-duckdb_cached=os.path.exists(duckdb_path)
+duckdb_path = env.get("DUCKDB_PATH", "/tmp/db.duckdb")
+duckdb_data_path = env.get("DUCKDB_DATA_PATH", "/var/duckdb")
+duckdb_cached = os.path.exists(duckdb_path)
