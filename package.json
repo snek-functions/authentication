@@ -18,7 +18,7 @@
     "serverless-plugin-ifelse": "^1.0.7"
   },
   "scripts": {
-    "build": "sf build -f .",
+    "build": "sf build -f . --declaration",
     "start": "sf build -f . && IS_OFFLINE=true nodemon --watch dist --exec sls offline --httpPort 4020 --lambdaPort 4022",
     "deploy": "sls deploy",
     "postinstall": "sf install"
