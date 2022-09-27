@@ -2,6 +2,7 @@
   "name": "@snek-functions/authentication",
   "version": "0.0.4",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "files": [
     "dist"
