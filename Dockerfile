@@ -30,7 +30,26 @@ RUN ln -s /usr/local/bin/node /var/lang/bin/node ;\
     npm install ;\
     npx snek-functions build --functions-path . ;\
     # Copy the built functions to the lambda function
-    cp -r dist node_modules ${LAMBDA_TASK_ROOT}
+    && rm -rf venv \
+    && mkdir -p venv/bin \
+    && ln -s $(which python3) venv/bin/python \
+    && venv/bin/python -m pip install -U pip \
+    && venv/bin/python -m pip install duckdb \
+    && venv/bin/python setup_duckdb.py \
+    && cp -r dist node_modules venv ${LAMBDA_TASK_ROOT} \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $BUILD_DEPS \
+    && rm -rf /var/lib/apt/lists
+
+# Install packages needed to run your application (not build deps):
+# We need to recreate the /usr/share/man/man{1..8} directories first because
+# they were clobbered by a parent image.
+RUN set -ex \
+    && RUN_DEPS=" \
+    python3 \
+    " \
+    && seq 1 8 | xargs -I{} mkdir -p /usr/share/man/man{} \
+    && apt-get update && apt-get install -y --no-install-recommends $RUN_DEPS \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 
