@@ -1,10 +1,8 @@
-from sys import argv
-
 import duckdb
+from sys import argv
 
 import settings as settings
 
-#con = duckdb.connect(':memory:')
 if settings.is_offline:
     con = duckdb.connect(':memory:')
 else:
@@ -67,7 +65,6 @@ def fetch(username):
 
 
 def main(username):
-    # if not settings.duckdb_cached:
     out = f'{{ \
         "alias": "nobody", \
         "user_id": "0", \
