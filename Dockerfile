@@ -1,11 +1,12 @@
 FROM node:18.8.0-slim
 
 LABEL description="This container serves as an entry point for our future Snek Function projects."
-LABEL org.opencontainers.image.source="https://github.com/snek-functions/template"
+LABEL org.opencontainers.image.source="https://github.com/snek-functions/authentication"
 LABEL maintainer="opensource@snek.at"
 
 ENV LAMBDA_TASK_ROOT=/var/task \
-    SNEK_FUNCTIONS_BUILD_DIR=/tmp/snek-functions
+    SNEK_FUNCTIONS_BUILD_DIR=/tmp/snek-functions \
+    HOME=/var/task
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 
@@ -26,11 +27,39 @@ RUN chmod +x entrypoint.sh
 
 WORKDIR ${SNEK_FUNCTIONS_BUILD_DIR}
 
-RUN ln -s /usr/local/bin/node /var/lang/bin/node ;\
-    npm install ;\
-    npx snek-functions build --functions-path . ;\
+# Update, install and cleaning:
+RUN set -ex \
+    && BUILD_DEPS=" \
+    build-essential \
+    python3-dev \
+    python3-pip \
+    python3-setuptools \
+    " \
+    && apt-get update && apt-get install -y --no-install-recommends $BUILD_DEPS \
+    #&& ln -s /usr/local/bin/node /var/lang/bin/node \
+    && npm install \
+    && npx snek-functions build --functions-path . \
     # Copy the built functions to the lambda function
-    cp -r dist node_modules ${LAMBDA_TASK_ROOT}
+    && rm -rf venv \
+    && mkdir -p venv/bin \
+    && ln -s $(which python3) venv/bin/python \
+    && venv/bin/python -m pip install -U pip \
+    && venv/bin/python -m pip install duckdb \
+    && venv/bin/python setup_duckdb.py \
+    && cp -r dist node_modules venv ${LAMBDA_TASK_ROOT} \
+    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $BUILD_DEPS \
+    && rm -rf /var/lib/apt/lists
+
+# Install packages needed to run your application (not build deps):
+# We need to recreate the /usr/share/man/man{1..8} directories first because
+# they were clobbered by a parent image.
+RUN set -ex \
+    && RUN_DEPS=" \
+    python3 \
+    " \
+    && seq 1 8 | xargs -I{} mkdir -p /usr/share/man/man{} \
+    && apt-get update && apt-get install -y --no-install-recommends $RUN_DEPS \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR ${LAMBDA_TASK_ROOT}
 
