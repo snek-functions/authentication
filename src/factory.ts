@@ -1,11 +1,11 @@
 import {makeFn} from '@snek-at/functions'
-import type { SpawnOptionsWithoutStdio } from "child_process";
+import type {SpawnOptionsWithoutStdio} from 'child_process'
 
 export const url = process.env.IS_OFFLINE
   ? process.env.CODESPACE_NAME
-    ? `https://${process.env.CODESPACE_NAME}-4000.githubpreview.dev/graphql`
-    : 'http://localhost:4000/graphql'
-  : 'https://6w9f19rni9.execute-api.eu-central-1.amazonaws.com/graphql'
+    ? `https://${process.env.CODESPACE_NAME}-4020.githubpreview.dev/graphql`
+    : 'http://localhost:4020/graphql'
+  : `${process.env.ENDPOINT_URL_AUTHENTICATION}`
 
 export const fn = makeFn({
   url
