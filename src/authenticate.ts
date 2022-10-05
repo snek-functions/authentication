@@ -1,6 +1,5 @@
-import { fn, spawnChild } from './factory'
-import { hash, storage } from './internal/index.js'
-import { User } from './types'
+import {fn, spawnChild} from './factory'
+import {User} from './types'
 
 const authenticate = fn<
   { username: string; password: string },
@@ -10,15 +9,18 @@ const authenticate = fn<
 >(
   async ({ username, password }, _, req) => {
     // Does one alias per user really make sense?
-
+    console.log(process.env.CODESPACE_NAME)
     // const user = (await storage.queryDatabaseForUser(username)) as User
-    const userStr = await spawnChild('venv/bin/python', 'internal/storage.py', [username,])
+    const userStr = await spawnChild('venv/bin/python', 'internal/storage.py', [
+      username
+    ])
     console.log(`test:${userStr}`)
     const user = JSON.parse(userStr) as User
-    console.log("test: ", user)
-    
-    if (user.user_id != "-1") {
- 
+    console.log('test: ', user)
+
+    const {hash} = await import('./internal/index.js')
+
+    if (user.user_id != '0') {
       // const user: User = {
       //   user_id: '1',
       //   alias: username,
