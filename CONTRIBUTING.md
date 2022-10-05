@@ -19,7 +19,7 @@
 
 ## [](#commits)Commits
 
--   All commits may start with an git-cz type
+-   All commits may start with an [git-cz](https://github.com/streamich/git-cz) type
 -   All commits must be written in present tense
 -   All commits may be multiline commits
 -   The commit headline must have a maximum of 71 chars
