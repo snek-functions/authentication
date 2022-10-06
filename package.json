@@ -9,10 +9,17 @@
   ],
   "description": "Generated with `snek-functions init`",
   "author": "snek-at",
+  "config": {
+    "commitizen": {
+      "path": "git-cz"
+    }
+  },
   "dependencies": {
     "@snek-at/functions": "*"
   },
   "devDependencies": {
+    "commitizen": "^4.2.5",
+    "git-cz": "^4.9.0",
     "nodemon": "^2.0.19",
     "serverless": "^3.19.0",
     "serverless-offline": "^9.2.6",

@@ -38,3 +38,6 @@ jobs:
           echo VERSION=$VERSION
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
+
+# SPDX-License-Identifier: (EUPL-1.2)
+# Copyright © 2019-2022 snek.at

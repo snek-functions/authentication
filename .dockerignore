@@ -4,3 +4,6 @@ node_modules
 *Dockerfile*
 yarn.lock
 package-lock.json
+
+# SPDX-License-Identifier: (EUPL-1.2)
+# Copyright © 2019-2022 snek.at
