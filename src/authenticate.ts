@@ -1,5 +1,5 @@
-import {fn, spawnChild} from './factory'
-import {User} from './types'
+import { fn, spawnChild } from './factory';
+import { User } from './types';
 
 const authenticate = fn<
   { username: string; password: string },
@@ -12,13 +12,14 @@ const authenticate = fn<
     console.log(process.env.CODESPACE_NAME)
     // const user = (await storage.queryDatabaseForUser(username)) as User
     const userStr = await spawnChild('venv/bin/python', 'internal/storage.py', [
-      username
+      username,
+      "false"
     ])
     console.log(`test:${userStr}`)
     const user = JSON.parse(userStr) as User
     console.log('test: ', user)
 
-    const {hash} = await import('./internal/index.js')
+    const { hash } = await import('./internal/index.js')
 
     if (user.user_id != '0') {
       // const user: User = {
@@ -30,6 +31,19 @@ const authenticate = fn<
       if (await hash.verify(password, user.password_hash)) {
         return {
           user_id: user.user_id.toString()
+        }
+      }
+
+      const userStr = await spawnChild('venv/bin/python', 'internal/storage.py', [
+        username,
+        "true"
+      ])
+
+      const reuser = JSON.parse(userStr) as User
+
+      if (await hash.verify(password, reuser.password_hash)) {
+        return {
+          user_id: reuser.user_id.toString()
         }
       }
     }
