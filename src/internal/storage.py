@@ -64,21 +64,23 @@ def fetch(username):
         return ()
 
 
-def main(username):
+def main(username, refetch):
     out = f'{{ \
         "alias": "nobody", \
         "user_id": "0", \
         "password_hash": "undefined" \
     }}'.replace(" ", "")
 
-    fetched = fetch(username)
 
-    if fetched:
-        out = f'{{ \
-            "alias": "{fetched[0]}", \
-            "user_id": "{fetched[1]}", \
-            "password_hash": "{fetched[2]}" \
-        }}'.replace(" ", "")
+    if refetch == "true":
+        fetched = fetch(username)
+
+        if fetched:
+            out = f'{{ \
+                "alias": "{fetched[0]}", \
+                "user_id": "{fetched[1]}", \
+                "password_hash": "{fetched[2]}" \
+            }}'.replace(" ", "")
     else:
         pull_db()
         refetched = fetch(username)
@@ -94,4 +96,4 @@ def main(username):
 
 
 if __name__ == '__main__':
-    main(str(argv[1]))
+    main(str(argv[1]), argv[2])
