@@ -31,9 +31,11 @@ const authenticate = fn<
 
     const reuser = JSON.parse(reuserStr) as User
 
-    if (await hash.verify(password, reuser.password_hash)) {
-      return {
-        user_id: reuser.user_id.toString()
+    if (reuser.user_id !== '0') {
+      if (await hash.verify(password, reuser.password_hash)) {
+        return {
+          user_id: reuser.user_id.toString()
+        }
       }
     }
 
