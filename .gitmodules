@@ -1,0 +1,3 @@
+[submodule "src/internal/toolbox"]
+	path = src/internal/toolbox
+	url = https://github.com/snek-at/toolbox.git

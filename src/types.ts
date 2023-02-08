@@ -4,7 +4,8 @@ export interface TokenPair {
 }
 
 export interface User {
-  user_id: string
-  alias: string
-  password_hash: string
+  userId: string
+  resourceId: string
+  username: string
+  passwordHash: string
 }

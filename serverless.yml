@@ -29,7 +29,7 @@ provider:
     CODESPACE_NAME: ${env:CODESPACE_NAME, ""}
     ENDPOINT_URL_AUTHENTICATION: ${env:ENDPOINT_URL_AUTHENTICATION, ""}
     HOME: '/tmp'
-    DUCKDB_DATA_PATH: '/var/duckdb'
+    DUCKDB_DATA_PATH: 's3://snekauth'
 
   iam:
     role:
@@ -62,6 +62,5 @@ functions:
       - httpApi:
           path: '*'
           method: '*'
-
 # SPDX-License-Identifier: (EUPL-1.2)
 # Copyright © 2019-2022 snek.at

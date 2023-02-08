@@ -1,99 +1,44 @@
-import duckdb
+from os import environ
 from sys import argv
 
-import settings as settings
+from pit import Pit, cli
 
-if settings.is_offline:
-    con = duckdb.connect(':memory:')
-else:
-    con = duckdb.connect(database=settings.duckdb_path, read_only=False)
+env = environ.copy()
 
-duckdb_cached = settings.duckdb_cached
+app = Pit(__name__, model_folder="models")
 
+app.config['HOME'] = env.get("HOME", "/var/task")
 
-def pull_db():
-    if settings.is_offline:
-        con.execute("INSTALL httpfs;")
-    con.execute("LOAD httpfs;")
+app.config['AWS_REGION'] = env.get("AWS_REGION", "")
+app.config['AWS_ACCESS_KEY_ID'] = env.get("AWS_ACCESS_KEY_ID", "")
+app.config['AWS_SECRET_ACCESS_KEY'] = env.get("AWS_SECRET_ACCESS_KEY", "")
 
-    if settings.s3_access_key_id:
-        con.execute(f"SET s3_region='{settings.s3_region}';")
-        con.execute(f"SET s3_access_key_id='{settings.s3_access_key_id}';")
-        con.execute(
-            f"SET s3_secret_access_key='{settings.s3_secret_access_key}';")
-    if settings.s3_session_token:
-        con.execute(f"SET s3_session_token='{settings.s3_session_token}';")
+app.config['AWS_SESSION_TOKEN'] = env.get("AWS_SESSION_TOKEN", "")
+app.config['IS_OFFLINE'] = env.get("IS_OFFLINE", "")
+app.config['DUCKDB_PATH'] = env.get("DUCKDB_PATH", "/tmp/db.duckdb")
+app.config['DUCKDB_DATA_PATH'] = env.get("DUCKDB_DATA_PATH", "/var/duckdb")
 
-    # Create a table with all user for authentication.
-    # Format:
-    # user_id | password |
-    # INTEGER | VARCHAR  |
-    con.execute("DROP TABLE IF EXISTS _user;")
-    con.execute(f" \
-        CREATE TABLE '_user' AS \
-        SELECT * \
-        FROM parquet_scan('{settings.duckdb_data_path}/_user.parquet') \
-        ORDER BY user_id; \
-    ")
-
-    # Create table with all alias and associated user for authentication.
-    # Format:
-    # user_id | alias   |
-    # INTEGER | VARCHAR |
-    con.execute("DROP TABLE IF EXISTS _alias;")
-    con.execute(f" \
-        CREATE TABLE '_alias' AS \
-        SELECT * \
-        FROM parquet_scan('{settings.duckdb_data_path}/_alias.parquet') \
-        ORDER BY user_id; \
-    ")
+app.config['SQLALCHEMY_DATABASE_URI'] = "duckdb:///:memory:"
 
 
-def fetch(username):
-    try:
-        res = con.execute(" \
-            SELECT a.alias, u.user_id, u.password FROM '_alias' a, '_user' u \
-            WHERE a.user_id=u.user_id AND a.alias=?::STRING \
-            LIMIT 1",
-                          (username,)
-                          )
+# print(app.config)
 
-        return res.fetchone()
-
-    except:
-        return ()
+# db = app.db
 
 
-def main(username, refetch):
-    out = f'{{ \
-        "alias": "nobody", \
-        "user_id": "0", \
-        "password_hash": "undefined" \
-    }}'.replace(" ", "")
+# class User(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     username = db.Column(db.String(80), unique=True, nullable=False)
+#     email = db.Column(db.String(120), unique=True, nullable=False)
+
+#     def __repr__(self):
+#         return f"<User {self.username}>"
 
 
-    if refetch == "true":
-        fetched = fetch(username)
+# get input variables argv
+#
+#
+# print(argv)
 
-        if fetched:
-            out = f'{{ \
-                "alias": "{fetched[0]}", \
-                "user_id": "{fetched[1]}", \
-                "password_hash": "{fetched[2]}" \
-            }}'.replace(" ", "")
-    else:
-        pull_db()
-        refetched = fetch(username)
-
-        if refetched:
-            out = f'{{ \
-                "alias": "{refetched[0]}", \
-                "user_id": "{refetched[1]}", \
-                "password_hash": "{refetched[2]}" \
-            }}'.replace(" ", "")
-
-    print(out)
-
-
-if __name__ == '__main__':
-    main(str(argv[1]), argv[2])
+# Call the main function and pass the commandline arguments
+app.main(*argv[1:], **vars(cli()))
