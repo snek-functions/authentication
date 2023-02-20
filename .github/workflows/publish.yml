@@ -16,6 +16,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Pull Submodules
+        run: git submodule update --init --recursive
+
       - name: Build image
         run: docker build . --file Dockerfile --tag $IMAGE_NAME
 
